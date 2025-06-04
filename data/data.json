@@ -1,0 +1,22 @@
+[
+  {
+    "description": "Groceries from SuperMart",
+    "amount": -55.75
+  },
+  {
+    "description": "Monthly Salary",
+    "amount": 2500.00
+  },
+  {
+    "description": "Coffee with friend",
+    "amount": -4.50
+  },
+  {
+    "description": "Online Course Subscription",
+    "amount": -29.99
+  },
+  {
+    "description": "Freelance Project Payment",
+    "amount": 350.00
+  }
+]
