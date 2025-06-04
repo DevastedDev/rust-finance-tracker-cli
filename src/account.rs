@@ -1,6 +1,6 @@
 use std::fs;
 use crate::transaction::Transaction;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 use std::io::Error;
 #[derive(Debug,Deserialize)]
 pub struct Account{
@@ -18,7 +18,7 @@ impl Account{
             Ok(transactions) =>{
                 Ok(Account{transactions})
             },
-            Err(reason) => Err(Error::other("Dataparsing Failed")),
+            Err(reason) => Err(Error::other(reason)),
         }
     }
     pub fn add_transaction(&mut self, trxn: Transaction){
@@ -32,5 +32,14 @@ impl Account{
     pub fn remove_transaction(&mut self,index : &usize){
         self.transactions.remove(index-1);
         fs::write("data/data.json",serde_json::to_string_pretty(&self.transactions).unwrap()).unwrap()
+    }
+
+
+    pub fn get_stats(&self) -> (f64,usize) {
+        let mut amt:f64 = 0.00;
+        for transaction in &self.transactions {
+            amt = amt + transaction.amount
+        }
+        (amt,self.transactions.iter().count() )
     }
 }

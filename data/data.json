@@ -1,22 +1,22 @@
 [
   {
-    "amount": -55.75,
-    "description": "Groceries from SuperMart"
+    "amount": 55.75,
+    "description": "Groceries from SuperMart",
+    "type": "expense"
   },
   {
-    "amount": 2500.0,
-    "description": "Monthly Salary"
+    "amount": 4.5,
+    "description": "Coffee with friend",
+    "type": "expense"
   },
   {
-    "amount": -4.5,
-    "description": "Coffee with friend"
+    "amount": 29.99,
+    "description": "Online Course Subscription",
+    "type": "expense"
   },
   {
-    "amount": -29.99,
-    "description": "Online Course Subscription"
-  },
-  {
-    "amount": 350.0,
-    "description": "Freelance Project Payment"
+    "amount": 40.0,
+    "description": "Claude.ai subscription",
+    "type": "expense"
   }
 ]

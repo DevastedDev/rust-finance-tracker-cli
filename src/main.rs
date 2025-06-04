@@ -1,16 +1,21 @@
 mod account;
 mod transaction;
+mod utils;
+
+use crate::transaction::Transaction;
 use account::Account;
 use clearscreen;
 use std::io;
 use std::io::Write;
-use std::ops::Index;
-use crate::transaction::Transaction;
 
 fn main() {
     let mut transactions = Account::init()
         .load_transactions(String::from("data/data.json"))
         .unwrap();
+    utils::long_line();
+    let stats = transactions.get_stats();
+    utils::display_stats(stats.0, stats.1);
+    utils::long_line();
     loop {
         let mut cmd_text = String::from("");
         print!(">");
@@ -21,24 +26,29 @@ fn main() {
         let command = &input.next();
 
         match command {
-
             // Application Commands
             Some("add") => {
-                let mut amount = input.next().unwrap().parse::<f64>().unwrap();
+                let amount = input.next().unwrap().parse::<f64>().unwrap();
                 let description: String = input.collect::<Vec<&str>>().join(" ");
-                transactions.add_transaction(Transaction::new(amount,description))
+                transactions.add_transaction(Transaction::new(amount, description))
             }
 
             Some("remove") => {
                 let id = &input.next().unwrap().parse::<usize>().unwrap();
                 transactions.remove_transaction(id);
-                println!("Removed ID: {}",id)
+                println!("Removed ID: {}", id)
             }
             Some("list") => {
                 let transactions = transactions.get_transactions();
                 for (i, el) in transactions.iter().enumerate() {
-                    println!("{:#?}. {} Spent For {}", i+1, el.amount, el.description)
+                    println!("{:#?}. {} Spent For {}", i + 1, el.amount, el.description)
                 }
+            }
+            Some("stats") =>{
+                utils::long_line();
+                let stats = transactions.get_stats();
+                utils::display_stats(stats.0, stats.1);
+                utils::long_line();
             }
             // Normal Commands
             Some("clear") => {
