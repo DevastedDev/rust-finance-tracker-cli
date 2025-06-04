@@ -2,18 +2,18 @@ mod account;
 mod transaction;
 
 use account::Account;
+use clearscreen;
 use std::io;
 use std::io::Write;
 use std::ops::Index;
-use transaction::Transaction;
+
+
 fn main() {
     loop {
-
         // We Get Transactions, After Loading the Account, we get Account struct from the function and unwrapping
         let transactions = Account::init()
             .load_transactions(String::from("data/data.json"))
             .unwrap();
-
 
         let mut cmd_text = String::from("");
         print!(">");
@@ -35,11 +35,13 @@ fn main() {
                 println!("{} for {}", amount, description)
             }
             Some("clear") => {
+                clearscreen::clear().expect("failed to clear screen");
+            }
+            Some("exit" | "quit") => {
                 println!("Quitting");
                 break;
             }
             Some("list") => {
-
                 /** List Transactions ***/
                 let transactions = transactions.get_transactions();
                 for (i, el) in transactions.iter().enumerate() {
