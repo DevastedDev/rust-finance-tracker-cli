@@ -1,22 +1,22 @@
 [
   {
-    "description": "Groceries from SuperMart",
-    "amount": -55.75
+    "amount": -55.75,
+    "description": "Groceries from SuperMart"
   },
   {
-    "description": "Monthly Salary",
-    "amount": 2500.00
+    "amount": 2500.0,
+    "description": "Monthly Salary"
   },
   {
-    "description": "Coffee with friend",
-    "amount": -4.50
+    "amount": -4.5,
+    "description": "Coffee with friend"
   },
   {
-    "description": "Online Course Subscription",
-    "amount": -29.99
+    "amount": -29.99,
+    "description": "Online Course Subscription"
   },
   {
-    "description": "Freelance Project Payment",
-    "amount": 350.00
+    "amount": 350.0,
+    "description": "Freelance Project Payment"
   }
 ]

@@ -1,20 +1,17 @@
 mod account;
 mod transaction;
-
 use account::Account;
 use clearscreen;
 use std::io;
 use std::io::Write;
 use std::ops::Index;
-
+use crate::transaction::Transaction;
 
 fn main() {
+    let mut transactions = Account::init()
+        .load_transactions(String::from("data/data.json"))
+        .unwrap();
     loop {
-        // We Get Transactions, After Loading the Account, we get Account struct from the function and unwrapping
-        let transactions = Account::init()
-            .load_transactions(String::from("data/data.json"))
-            .unwrap();
-
         let mut cmd_text = String::from("");
         print!(">");
         io::stdout().flush().unwrap();
@@ -24,16 +21,26 @@ fn main() {
         let command = &input.next();
 
         match command {
+
+            // Application Commands
             Some("add") => {
-                let amount = &input.next().unwrap();
-                let description: &str = input.next().unwrap();
-                println!("{} for {}", amount, description)
+                let mut amount = input.next().unwrap().parse::<f64>().unwrap();
+                let description: String = input.collect::<Vec<&str>>().join(" ");
+                transactions.add_transaction(Transaction::new(amount,description))
             }
+
             Some("remove") => {
-                let amount = &input.next().unwrap();
-                let description: &str = input.next().unwrap();
-                println!("{} for {}", amount, description)
+                let id = &input.next().unwrap().parse::<usize>().unwrap();
+                transactions.remove_transaction(id);
+                println!("Removed ID: {}",id)
             }
+            Some("list") => {
+                let transactions = transactions.get_transactions();
+                for (i, el) in transactions.iter().enumerate() {
+                    println!("{:#?}. {} Spent For {}", i+1, el.amount, el.description)
+                }
+            }
+            // Normal Commands
             Some("clear") => {
                 clearscreen::clear().expect("failed to clear screen");
             }
@@ -41,13 +48,7 @@ fn main() {
                 println!("Quitting");
                 break;
             }
-            Some("list") => {
-                /** List Transactions ***/
-                let transactions = transactions.get_transactions();
-                for (i, el) in transactions.iter().enumerate() {
-                    println!("{:#?}. {} Spent For {}", i, el.amount, el.description)
-                }
-            }
+            // Fallbacks`
             Some(_) => {
                 println!("No Command Exists");
             }

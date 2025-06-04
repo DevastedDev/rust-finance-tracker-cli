@@ -1,6 +1,6 @@
 use std::fs;
 use crate::transaction::Transaction;
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use std::io::Error;
 #[derive(Debug,Deserialize)]
 pub struct Account{
@@ -22,10 +22,15 @@ impl Account{
         }
     }
     pub fn add_transaction(&mut self, trxn: Transaction){
-        self.transactions.push(trxn)
+        self.transactions.push(trxn);
+        fs::write("data/data.json",serde_json::to_string_pretty(&self.transactions).unwrap()).unwrap()
     }
-
     pub fn get_transactions(&self)-> &Vec<Transaction>{
         &self.transactions
+    }
+
+    pub fn remove_transaction(&mut self,index : &usize){
+        self.transactions.remove(index-1);
+        fs::write("data/data.json",serde_json::to_string_pretty(&self.transactions).unwrap()).unwrap()
     }
 }
