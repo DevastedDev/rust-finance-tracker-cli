@@ -36,10 +36,7 @@ impl Account{
 
 
     pub fn get_stats(&self) -> (f64,usize) {
-        let mut amt:f64 = 0.00;
-        for transaction in &self.transactions {
-            amt = amt + transaction.amount
-        }
-        (amt,self.transactions.iter().count() )
+        let amt:f64 = self.transactions.iter().map(|el| el.amount).sum();
+         (amt,self.transactions.iter().count() )
     }
 }
