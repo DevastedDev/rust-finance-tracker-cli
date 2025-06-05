@@ -34,7 +34,14 @@ impl Account{
         fs::write(datafile,serde_json::to_string_pretty(&self.transactions).unwrap()).unwrap()
     }
 
+    pub fn find_transactions(&self,keywords : Vec<&str>) -> Vec<&Transaction>{
 
+        let mut records : Vec<&Transaction> = vec![];
+        for keyword in keywords {
+            self.transactions.iter().filter(|s| s.description.to_lowercase().contains(&keyword.to_lowercase())).for_each(|s| records.push(s));
+        }
+        records
+    }
     pub fn get_stats(&self) -> (f64,usize) {
         let amt:f64 = self.transactions.iter().map(|el| el.amount).sum();
          (amt,self.transactions.iter().count() )

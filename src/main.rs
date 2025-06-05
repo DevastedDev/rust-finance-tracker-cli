@@ -3,14 +3,15 @@ mod command;
 mod transaction;
 mod utils;
 
-use command::parse_command;
-use transaction::Transaction;
+use crate::utils::print_transactions_filter;
+use crate::utils::print_transactions_list;
 use account::Account;
 use clearscreen;
 use command::Command;
+use command::parse_command;
 use std::io;
 use std::io::Write;
-
+use transaction::Transaction;
 
 fn main() {
     utils::long_line();
@@ -45,26 +46,33 @@ fn main() {
         let cmd = parse_command(&command);
         match cmd {
             Command::Add => {
-                let amount = input.next().unwrap().parse::<f64>().unwrap();
+                let amount = match input.next().and_then(|s| s.parse::<f64>().ok()) {
+                    Some(t) => t,
+                    None => return println!("invalid amount"),
+                };
                 let description: String = input.collect::<Vec<&str>>().join(" ");
                 transactions.add_transaction(Transaction::new(amount, description), &datafile)
             }
             Command::Remove => {
-                let id = &input.next().unwrap().parse::<usize>().unwrap();
-                transactions.remove_transaction(id, &datafile);
+                let id = match input.next().and_then(|s| s.parse::<usize>().ok()) {
+                    Some(t) => t,
+                    None => return println!("invalid amount"),
+                };
+                transactions.remove_transaction(&id, &datafile);
                 println!("Removed ID: {}", id)
             }
             Command::List => {
                 let transactions = transactions.get_transactions();
-                for (i, el) in transactions.iter().enumerate() {
-                    println!("{:#?}. {} Spent For {}", i + 1, el.amount, el.description)
-                }
+                print_transactions_list(transactions);
             }
             Command::Stats => {
-                utils::long_line();
                 let stats = transactions.get_stats();
                 utils::display_stats(stats.0, stats.1);
-                utils::long_line();
+            }
+            Command::Filter => {
+                let keywords: Vec<&str> = input.collect::<Vec<&str>>();
+                let found = transactions.find_transactions(keywords);
+                print_transactions_filter(found);
             }
             Command::Clear => {
                 clearscreen::clear().expect("failed to clear screen");
