@@ -1,19 +1,29 @@
 mod account;
+mod command;
 mod transaction;
 mod utils;
 
-use crate::transaction::Transaction;
+use command::parse_command;
+use transaction::Transaction;
 use account::Account;
 use clearscreen;
+use command::Command;
 use std::io;
 use std::io::Write;
-fn main() {
 
+
+fn main() {
     utils::long_line();
     let datafile: String = String::from("data/data.json");
 
-    // GET Stats and Initialize the account data
-    let mut transactions = Account::init().load_transactions(&datafile).unwrap();
+    let mut transactions = match Account::init().load_transactions(&datafile) {
+        Ok(account) => account,
+        Err(val) => {
+            println!("Error :{}", val);
+            return;
+        }
+    };
+
     let stats = transactions.get_stats();
     utils::display_stats(stats.0, stats.1);
 
@@ -24,48 +34,48 @@ fn main() {
 
         io::stdin().read_line(&mut cmd_text).unwrap();
         let mut input = cmd_text.trim().split_whitespace();
-        let command = &input.next();
+        let command = match input.next() {
+            Some(val) => val,
+            None => {
+                println!("Nothing Provided");
+                break;
+            }
+        };
 
-        match command {
-
-            Some("add") => {
+        let cmd = parse_command(&command);
+        match cmd {
+            Command::Add => {
                 let amount = input.next().unwrap().parse::<f64>().unwrap();
                 let description: String = input.collect::<Vec<&str>>().join(" ");
                 transactions.add_transaction(Transaction::new(amount, description), &datafile)
             }
-
-            Some("remove") => {
+            Command::Remove => {
                 let id = &input.next().unwrap().parse::<usize>().unwrap();
                 transactions.remove_transaction(id, &datafile);
                 println!("Removed ID: {}", id)
             }
-            Some("list") => {
+            Command::List => {
                 let transactions = transactions.get_transactions();
                 for (i, el) in transactions.iter().enumerate() {
                     println!("{:#?}. {} Spent For {}", i + 1, el.amount, el.description)
                 }
             }
-            Some("stats") => {
+            Command::Stats => {
                 utils::long_line();
                 let stats = transactions.get_stats();
                 utils::display_stats(stats.0, stats.1);
                 utils::long_line();
             }
-
-            Some("clear") => {
+            Command::Clear => {
                 clearscreen::clear().expect("failed to clear screen");
             }
-            Some("exit" | "quit") => {
+            Command::Exit => {
                 println!("Quitting");
                 break;
             }
-
-            Some(_) => {
+            Command::Unknown => {
                 println!("No Command Exists");
             }
-            None => {
-                break;
-            }
-        }
+        };
     }
 }
