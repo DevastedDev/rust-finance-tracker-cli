@@ -9,10 +9,9 @@ pub enum FileErrors {
 
 #[derive(Debug)]
 pub enum CommonError {
-    SomeCommon,
     RemovingTransactionFailed,
     ToPrettyStringFailed,
-    AddingTransactionFailed
+    AddingTransactionFailed,
 }
 impl Error for FileErrors {}
 impl Error for CommonError {}
@@ -29,7 +28,6 @@ impl Display for FileErrors {
 impl Display for CommonError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let message = match self {
-            Self::SomeCommon => "Generic Message",
             Self::RemovingTransactionFailed => "Failed To Remove Transaction",
             Self::AddingTransactionFailed => "Failed To Add Transaction",
             Self::ToPrettyStringFailed => "Failed To Format to Pretty String"

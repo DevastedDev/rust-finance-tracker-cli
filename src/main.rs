@@ -4,7 +4,6 @@ mod errors;
 mod transaction;
 mod utils;
 
-use crate::errors::CommonError;
 use crate::utils::print_transactions_filter;
 use crate::utils::print_transactions_list;
 use account::Account;
@@ -29,8 +28,10 @@ fn main() {
     };
 
     let stats = transactions.get_stats();
-    utils::display_stats(stats.0, stats.1);
-
+    match utils::display_stats(stats.0, stats.1) {
+        Ok(_) => (),
+        Err(_) => println!("Unable to print the stats"),
+    }
     loop {
         let mut cmd_text = String::new();
         print!(">");
@@ -56,7 +57,7 @@ fn main() {
                 let description: String = input.collect::<Vec<&str>>().join(" ");
                 match transactions.add_transaction(Transaction::new(amount, description), &datafile)
                 {
-                    Ok(b) => println!("Added Transaction Successfully"),
+                    Ok(_) => println!("Added Transaction Successfully"),
                     Err(e) => println!("{e}"),
                 }
             }
@@ -67,7 +68,7 @@ fn main() {
                 };
                 println!("Removed ID: {}", id);
                 match transactions.remove_transaction(&id, &datafile) {
-                    Ok(b) => println!("Removed Transaction Successfully"),
+                    Ok(_) => println!("Removed Transaction Successfully"),
                     Err(e) => println!("{e}"),
                 }
             }

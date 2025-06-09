@@ -1,7 +1,6 @@
 use std::fs;
 use crate::transaction::Transaction;
 use serde::{Deserialize};
-use serde_json::Error;
 use crate::errors::{CommonError, FileErrors};
 use crate::errors::FileErrors::FileNotFound;
 
@@ -16,17 +15,17 @@ impl Account{
         }
     }
     pub fn load_transactions(&self, file_path:&String) -> Result<Account,FileErrors>{
-        let contents = fs::read_to_string(file_path).map_err(|e| FileNotFound)?;
+        let contents = fs::read_to_string(file_path).map_err(|_| FileNotFound)?;
         match serde_json::from_str::<Vec<Transaction>>(&contents){
             Ok(transactions) =>{
                 Ok(Account{transactions})
             },
-            Err(reason) => Err(FileErrors::FileParsingFailed),
+            Err(..) => Err(FileErrors::FileParsingFailed),
         }
     }
     pub fn add_transaction(&mut self, trxn: Transaction,datafile:&String)->Result<bool,CommonError>{
         self.transactions.push(trxn);
-        match fs::write(datafile,serde_json::to_string_pretty(&self.transactions).map_err(|e| CommonError::ToPrettyStringFailed)?) {
+        match fs::write(datafile,serde_json::to_string_pretty(&self.transactions).map_err(|_| CommonError::AddingTransactionFailed)?) {
             Ok(..) => Ok(true),
             Err(..) => Err(CommonError::RemovingTransactionFailed)
         }
