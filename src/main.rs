@@ -1,8 +1,10 @@
 mod account;
 mod command;
+mod errors;
 mod transaction;
 mod utils;
 
+use crate::errors::CommonError;
 use crate::utils::print_transactions_filter;
 use crate::utils::print_transactions_list;
 use account::Account;
@@ -15,12 +17,13 @@ use transaction::Transaction;
 
 fn main() {
     utils::long_line();
+
     let datafile: String = String::from("data/data.json");
 
     let mut transactions = match Account::init().load_transactions(&datafile) {
         Ok(account) => account,
-        Err(val) => {
-            println!("Error :{}", val);
+        Err(error) => {
+            println!("{error}");
             return;
         }
     };
@@ -29,7 +32,7 @@ fn main() {
     utils::display_stats(stats.0, stats.1);
 
     loop {
-        let mut cmd_text = String::from("");
+        let mut cmd_text = String::new();
         print!(">");
         io::stdout().flush().unwrap();
 
@@ -51,28 +54,44 @@ fn main() {
                     None => return println!("invalid amount"),
                 };
                 let description: String = input.collect::<Vec<&str>>().join(" ");
-                transactions.add_transaction(Transaction::new(amount, description), &datafile)
+                match transactions.add_transaction(Transaction::new(amount, description), &datafile)
+                {
+                    Ok(b) => println!("Added Transaction Successfully"),
+                    Err(e) => println!("{e}"),
+                }
             }
             Command::Remove => {
                 let id = match input.next().and_then(|s| s.parse::<usize>().ok()) {
                     Some(t) => t,
                     None => return println!("invalid amount"),
                 };
-                transactions.remove_transaction(&id, &datafile);
-                println!("Removed ID: {}", id)
+                println!("Removed ID: {}", id);
+                match transactions.remove_transaction(&id, &datafile) {
+                    Ok(b) => println!("Removed Transaction Successfully"),
+                    Err(e) => println!("{e}"),
+                }
             }
             Command::List => {
                 let transactions = transactions.get_transactions();
-                print_transactions_list(transactions);
+                match print_transactions_list(transactions) {
+                    Ok(_) => (),
+                    Err(_) => println!("Unable to list the transactions"),
+                }
             }
             Command::Stats => {
                 let stats = transactions.get_stats();
-                utils::display_stats(stats.0, stats.1);
+                match utils::display_stats(stats.0, stats.1) {
+                    Ok(_) => (),
+                    Err(_) => println!("Unable to print the stats"),
+                }
             }
             Command::Filter => {
                 let keywords: Vec<&str> = input.collect::<Vec<&str>>();
                 let found = transactions.find_transactions(keywords);
-                print_transactions_filter(found);
+                match print_transactions_filter(found) {
+                    Ok(_) => (),
+                    Err(_) => println!("Unable to filter the list"),
+                }
             }
             Command::Clear => {
                 clearscreen::clear().expect("failed to clear screen");

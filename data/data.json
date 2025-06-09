@@ -1,22 +1,22 @@
 [
   {
     "amount": 55.75,
-    "description": "Groceries from SuperMart",
-    "type": "expense"
+    "description": "Groceries from SuperMart"
   },
   {
     "amount": 4.5,
-    "description": "Coffee with friend",
-    "type": "expense"
+    "description": "Coffee with friend"
   },
   {
     "amount": 29.99,
-    "description": "Online Course Subscription",
-    "type": "expense"
+    "description": "Online Course Subscription"
   },
   {
     "amount": 40.0,
-    "description": "Claude.ai subscription",
-    "type": "expense"
+    "description": "Claude.ai subscription"
+  },
+  {
+    "amount": 200.0,
+    "description": "to the openai subscription"
   }
 ]
