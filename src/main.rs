@@ -55,6 +55,10 @@ fn main() {
                     Some(t) => t,
                     None => return println!("invalid amount"),
                 };
+                if amount < 0.0 {
+                    println!("{RED}Spent Amount Cannot Be Negative{RESET}");
+                    continue;
+                }
                 let description: String = input.collect::<Vec<&str>>().join(" ");
                 match transactions.add_transaction(Transaction::new(amount, description), &datafile)
                 {
