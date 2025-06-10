@@ -4,6 +4,7 @@ mod errors;
 mod transaction;
 mod utils;
 
+use simply_colored::*;
 use crate::utils::print_transactions_filter;
 use crate::utils::print_transactions_list;
 use account::Account;
@@ -22,7 +23,7 @@ fn main() {
     let mut transactions = match Account::init().load_transactions(&datafile) {
         Ok(account) => account,
         Err(error) => {
-            println!("{error}");
+            println!("{}",error);
             return;
         }
     };
