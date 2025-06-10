@@ -105,6 +105,9 @@ fn main() {
             Command::Filter => {
                 let keywords: Vec<&str> = input.collect::<Vec<&str>>();
                 let found = transactions.find_transactions(keywords);
+                if found.len() <= 0 {
+                    println!("{BG_RED}{WHITE}No Transactions Found{RESET}")
+                }
                 match print_transactions_filter(found) {
                     Ok(_) => (),
                     Err(_) => println!("Unable to filter the list"),
