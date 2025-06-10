@@ -4,13 +4,13 @@ mod errors;
 mod transaction;
 mod utils;
 
-use simply_colored::*;
 use crate::utils::print_transactions_filter;
 use crate::utils::print_transactions_list;
 use account::Account;
 use clearscreen;
 use command::Command;
 use command::parse_command;
+use simply_colored::*;
 use std::io;
 use std::io::Write;
 use transaction::Transaction;
@@ -23,7 +23,7 @@ fn main() {
     let mut transactions = match Account::init().load_transactions(&datafile) {
         Ok(account) => account,
         Err(error) => {
-            println!("{}",error);
+            println!("{}", error);
             return;
         }
     };
@@ -80,6 +80,17 @@ fn main() {
                     Err(_) => println!("Unable to list the transactions"),
                 }
             }
+            Command::Help => {
+                println!("{BLUE} Below Are the Available Commands: ");
+                println!("{BOLD}{YELLOW}● add amount(integer) description , {GREEN} eg : {UNDERLINE}add 500 claude.ai subscription{RESET}");
+                println!("{BOLD}{YELLOW}● remove id(integer) , {GREEN} eg : {UNDERLINE}remove 1{RESET}");
+                println!("{BOLD}{YELLOW}● list all the transactions , {GREEN} eg : {UNDERLINE}list{RESET}");
+                println!("{BOLD}{YELLOW}● show stats  `stats` , {GREEN} eg : {UNDERLINE}stats{RESET}");
+                println!("{BOLD}{YELLOW}● filter keyword - lists all the filtered transactions containing the keyword, {GREEN} eg : {UNDERLINE}filter claude{RESET}");
+                println!("{BOLD}{YELLOW}● clear tui `clear` - Clears all the terminal screen , {GREEN} eg : {UNDERLINE}clear{RESET}");
+                println!("{BOLD}{YELLOW}● Exit use `exit` or `quit` , {GREEN} eg : {UNDERLINE}exit{RESET}");
+            }
+
             Command::Stats => {
                 let stats = transactions.get_stats();
                 match utils::display_stats(stats.0, stats.1) {

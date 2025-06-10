@@ -6,6 +6,7 @@ pub enum Command {
     Clear,
     Stats,
     Filter,
+    Help,
     Unknown,
 }
 
@@ -16,6 +17,7 @@ pub fn parse_command(command: &str) -> Command {
         "list" => Command::List,
         "stats" => Command::Stats,
         "filter" => Command::Filter,
+        "help" => Command::Help,
         "exit" | "quit" => Command::Exit,
         "clear" => Command::Clear,
         _ => Command::Unknown,
